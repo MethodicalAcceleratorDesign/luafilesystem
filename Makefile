@@ -9,10 +9,13 @@ include $(CONFIG)
 SRCS= src/$T.c
 OBJS= src/$T.o
 
-lib: src/lfs.so
+lib: lfs.a src/lfs.so
+
+lfs.a: $(OBJS)
+	env $(AR) -r lib$@ $(OBJS)
 
 src/lfs.so: $(OBJS)
-	MACOSX_DEPLOYMENT_TARGET="10.3"; export MACOSX_DEPLOYMENT_TARGET; $(CC) $(LIB_OPTION) -o src/lfs.so $(OBJS)
+	MACOSX_DEPLOYMENT_TARGET="10.13"; export MACOSX_DEPLOYMENT_TARGET; $(CC) $(LIB_OPTION) -o src/lfs.so $(OBJS)
 
 test: lib
 	LUA_CPATH=./src/?.so lua tests/test.lua
@@ -22,4 +25,4 @@ install:
 	cp src/lfs.so $(DESTDIR)$(LUA_LIBDIR)
 
 clean:
-	rm -f src/lfs.so $(OBJS)
+	rm -f liblfs.a src/lfs.so $(OBJS)
